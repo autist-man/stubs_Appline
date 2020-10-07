@@ -4,23 +4,20 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 import ru.appline.logic.Model;
 import ru.appline.logic.User;
+import ru.appline.util.UtilRequest;
 
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.concurrent.atomic.AtomicInteger;
 
 @WebServlet(urlPatterns = "/add")
 public class ServletAdd extends HttpServlet {
 
-    private AtomicInteger counter = new AtomicInteger(4);
-
-    Model model = Model.getInstance();
-    Gson gson = new GsonBuilder().setPrettyPrinting().create();
+    private Model model = Model.getInstance();
+    private Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
 //    @Override
 //    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
@@ -33,7 +30,7 @@ public class ServletAdd extends HttpServlet {
 //        double salary = Double.parseDouble(request.getParameter("salary"));
 //
 //        User user = new User(name, surname, salary);
-//        model.addUser(user,counter.getAndIncrement());
+//        model.addUser(user);
 //
 //        printWriter.print("<html>" +
 //                            "<h3>Пользователь " + name + " " + surname +
@@ -45,28 +42,15 @@ public class ServletAdd extends HttpServlet {
 //    }
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        StringBuffer stringBuffer = new StringBuffer();
-        String line;
-        try{
-            BufferedReader reader = request.getReader();
-            while ((line = reader.readLine()) != null){
-                stringBuffer.append(line);
-            }
-        }catch (Exception exception){
-            System.out.println("Error");
-        }
-
-        JsonObject jsonObject = gson.fromJson(String.valueOf(stringBuffer),JsonObject.class);
-        request.setCharacterEncoding("UTF-8");
+        UtilRequest.setJSONContentTypeAndReqEncode(request, response);
+        JsonObject jsonObject = UtilRequest.getJsonObject(request, gson);
 
         String name = jsonObject.get("name").getAsString();
         String surname = jsonObject.get("surname").getAsString();
         double salary = jsonObject.get("salary").getAsDouble();
 
         User user = new User(name, surname, salary);
-        model.addUser(user,counter.getAndIncrement());
-
-        response.setContentType("application/json:charset=utf-8");
+        model.addUser(user);
 
         PrintWriter printWriter = response.getWriter();
         printWriter.print(gson.toJson(model.getFromList()));
