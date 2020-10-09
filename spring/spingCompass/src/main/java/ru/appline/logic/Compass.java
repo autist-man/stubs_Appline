@@ -21,7 +21,6 @@ public class Compass {
     }
 
     public Map<String, String> getSides() {
-
         return side;
     }
 

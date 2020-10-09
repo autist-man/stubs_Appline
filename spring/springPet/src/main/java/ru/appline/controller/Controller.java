@@ -1,13 +1,11 @@
 package ru.appline.controller;
 
-import javafx.beans.binding.StringBinding;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 import ru.appline.logic.Pet;
 import ru.appline.logic.PetModel;
 import ru.appline.util.ChangePet;
 
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
